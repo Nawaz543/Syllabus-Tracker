@@ -67,7 +67,7 @@ your data remains safe ✅
 Download the project file:
 
 ```text
-index.html
+syllabusTraker.html
 ```
 
 ### Step 2
