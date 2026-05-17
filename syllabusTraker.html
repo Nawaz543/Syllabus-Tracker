@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Syllabus Tracker</title>
+
+<style>
+:root{
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --text:#111827;
+    --sub:#6b7280;
+    --primary:#6366f1;
+    --primary2:#8b5cf6;
+    --border:#e5e7eb;
+    --success:#10b981;
+    --shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+body.dark{
+    --bg:#0f172a;
+    --card:#111827;
+    --text:#f9fafb;
+    --sub:#9ca3af;
+    --border:#1f2937;
+    --shadow:0 10px 30px rgba(0,0,0,.4);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    transition:.3s;
+    min-height:100vh;
+}
+
+.container{
+    width:min(1200px,95%);
+    margin:auto;
+    padding:20px;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+}
+
+.title{
+    font-size:clamp(1.5rem,4vw,2.5rem);
+    font-weight:bold;
+    background:linear-gradient(to right,var(--primary),var(--primary2));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.top-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+button{
+    border:none;
+    padding:10px 16px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.primary-btn{
+    background:linear-gradient(to right,var(--primary),var(--primary2));
+    color:white;
+}
+
+.secondary-btn{
+    background:var(--card);
+    color:var(--text);
+    border:1px solid var(--border);
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:var(--shadow);
+    animation:fade .4s ease;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+input, textarea{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--text);
+    outline:none;
+}
+
+textarea{
+    resize:vertical;
+    min-height:70px;
+}
+
+.course{
+    margin-bottom:25px;
+}
+
+.course-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:15px;
+    flex-wrap:wrap;
+}
+
+.course-name{
+    font-size:1.4rem;
+    font-weight:bold;
+}
+
+.subject-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:15px;
+}
+
+.subject-card{
+    background:var(--bg);
+    border-radius:18px;
+    padding:16px;
+    border:1px solid var(--border);
+    transition:.3s;
+}
+
+.subject-card:hover{
+    transform:translateY(-4px);
+}
+
+.subject-title{
+    font-weight:bold;
+    margin-bottom:10px;
+    font-size:1.1rem;
+}
+
+.chapter{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.chapter label{
+    flex:1;
+    font-size:.95rem;
+     /* word-break:break-word; */
+     overflow-wrap:break-word;
+}
+
+.progress-box{
+    margin:15px 0;
+}
+
+.progress-top{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:6px;
+    font-size:.9rem;
+}
+
+.progress{
+    width:100%;
+    height:12px;
+    background:#d1d5db;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(to right,var(--success),#34d399);
+    transition:.4s;
+}
+
+.comment{
+    margin-top:10px;
+}
+
+.empty{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--sub);
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:15px;
+    z-index:999;
+}
+
+.modal-content{
+    background:var(--card);
+    width:min(700px,100%);
+    max-height:95vh;
+    overflow:auto;
+    border-radius:24px;
+    padding:25px;
+    animation:fade .3s ease;
+}
+
+.subject-input{
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.subject-input input{
+    flex:1;
+}
+
+.small{
+    width:110px;
+}
+
+.footer{
+    text-align:center;
+    color:var(--sub);
+    margin-top:30px;
+    font-size:.9rem;
+}
+
+@media(max-width:700px){
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .subject-input{
+        flex-direction:column;
+    }
+
+    .small{
+        width:100%;
+    }
+}
+
+@media(max-width:270px){
+    .title{
+        font-size:1.2rem;
+    }
+
+    button{
+        width:100%;
+    }
+
+    .top-actions{
+        width:100%;
+    }
+
+    .subject-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <div class="title">📚 Syllabus Tracker</div>
+
+        <div class="top-actions">
+            <button class="secondary-btn" onclick="toggleTheme()">🌙 Theme</button>
+            <button class="primary-btn" onclick="openForm()">➕ Add Course</button>
+        </div>
+    </div>
+
+    <div id="coursesContainer"></div>
+
+    <div class="footer">
+        Your data is auto-saved in browser storage 💾
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="formModal" style="display:none;">
+    <div class="modal-content">
+
+        <h2 style="margin-bottom:20px;">Create New Course</h2>
+
+        <div class="form-grid">
+
+            <div class="full">
+                <input type="text" id="courseName" placeholder="Course Name (e.g. BTech 4th Sem)">
+            </div>
+
+            <div class="full">
+                <h3 style="margin-bottom:10px;">Subjects</h3>
+
+                <div id="subjectsArea"></div>
+
+                <button class="secondary-btn" onclick="addSubjectField()" type="button">
+                    + Add Subject
+                </button>
+            </div>
+
+            <div class="full">
+                <button class="primary-btn" style="width:100%;" onclick="saveCourse()">
+                    Save Course
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Support Popup -->
+<div class="modal" id="supportPopup" style="display:none;">
+
+    <div class="modal-content" style="max-width:450px;text-align:center;">
+
+        <h2 style="margin-bottom:10px;">
+            ❤️ Support Developer
+        </h2>
+
+        <p style="color:var(--sub);margin-bottom:20px;line-height:1.6;">
+            If you like this project,<br>
+            please star the GitHub repo and connect on LinkedIn 🚀
+        </p>
+
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+
+            <a href="YOUR_GITHUB_LINK"
+               target="_blank"
+               onclick="markGithubClicked()">
+
+                <button class="primary-btn">
+                    ⭐ Star GitHub
+                </button>
+            </a>
+
+            <a href="YOUR_LINKEDIN_LINK"
+               target="_blank"
+               onclick="markLinkedinClicked()">
+
+                <button class="secondary-btn">
+                    💼 LinkedIn
+                </button>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+let syllabusData = JSON.parse(localStorage.getItem("syllabusTracker")) || [];
+let darkMode = JSON.parse(localStorage.getItem("darkMode")) || false;
+
+if(darkMode){
+    document.body.classList.add("dark");
+}
+
+function toggleTheme(){
+    document.body.classList.toggle("dark");
+
+    localStorage.setItem(
+        "darkMode",
+        document.body.classList.contains("dark")
+    );
+}
+
+function saveLocal(){
+    localStorage.setItem(
+        "syllabusTracker",
+        JSON.stringify(syllabusData)
+    );
+}
+
+function openForm(){
+    document.getElementById("formModal").style.display="flex";
+
+    document.getElementById("courseName").value="";
+    document.getElementById("subjectsArea").innerHTML="";
+
+    addSubjectField();
+}
+
+function closeForm(){
+    document.getElementById("formModal").style.display="none";
+}
+
+function addSubjectField(){
+    const div = document.createElement("div");
+
+    div.className="subject-input";
+
+    div.innerHTML=`
+        <input type="text" placeholder="Subject Name">
+        <input type="number" class="small" placeholder="Chapters" min="1">
+    `;
+
+    document.getElementById("subjectsArea").appendChild(div);
+}
+
+function saveCourse(){
+
+    const courseName = document.getElementById("courseName").value.trim();
+
+    if(!courseName){
+        alert("Enter course name");
+        return;
+    }
+
+    const subjectInputs = document.querySelectorAll(".subject-input");
+
+    let subjects=[];
+
+    subjectInputs.forEach(item=>{
+
+        const inputs = item.querySelectorAll("input");
+
+        const subName = inputs[0].value.trim();
+        const chapters = parseInt(inputs[1].value);
+
+        if(subName && chapters>0){
+
+            let chapterArr=[];
+
+            for(let i=1;i<=chapters;i++){
+                chapterArr.push({
+                    name:"Chapter "+i,
+                    done:false
+                });
+            }
+
+            subjects.push({
+                name:subName,
+                chapters:chapterArr,
+                comment:""
+            });
+        }
+    });
+
+    if(subjects.length===0){
+        alert("Add at least one subject");
+        return;
+    }
+
+    syllabusData.push({
+        id:Date.now(),
+        courseName,
+        subjects
+    });
+
+    saveLocal();
+    renderCourses();
+    closeForm();
+}
+
+function renderCourses(){
+
+    const container = document.getElementById("coursesContainer");
+
+    if(syllabusData.length===0){
+
+        container.innerHTML=`
+            <div class="card empty">
+                <h2>No Course Added Yet</h2>
+                <p style="margin-top:10px;">
+                    Click "Add Course" to start tracking your syllabus.
+                </p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML="";
+
+    syllabusData.forEach((course,courseIndex)=>{
+
+        let courseHTML=`
+            <div class="card course">
+
+                <div class="course-header">
+
+                    <div class="course-name">
+                        🎓 ${course.courseName}
+                    </div>
+
+                    <button class="secondary-btn"
+                        onclick="deleteCourse(${course.id})">
+                        Delete
+                    </button>
+
+                </div>
+
+                <div class="subject-grid">
+        `;
+
+        course.subjects.forEach((subject,subjectIndex)=>{
+
+            const total = subject.chapters.length;
+
+            const completed = subject.chapters.filter(c=>c.done).length;
+
+            const percent = Math.round((completed/total)*100);
+
+            let chapterHTML="";
+
+            subject.chapters.forEach((chapter,chapterIndex)=>{
+
+                chapterHTML += `
+                    <div class="chapter">
+                        <input type="checkbox"
+                            ${chapter.done ? "checked" : ""}
+                            onchange="toggleChapter(
+                                ${courseIndex},
+                                ${subjectIndex},
+                                ${chapterIndex}
+                            )"
+                        >
+
+                        <label>${chapter.name}</label>
+                    </div>
+                `;
+            });
+
+            courseHTML += `
+                <div class="subject-card">
+
+                    <div class="subject-title">
+                        📖 ${subject.name}
+                    </div>
+
+                    ${chapterHTML}
+
+                    <div class="progress-box">
+
+                        <div class="progress-top">
+                            <span>Progress</span>
+                            <span>${percent}%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-fill"
+                                style="width:${percent}%">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="comment">
+                        <textarea
+                            placeholder="Write notes/comments..."
+                            onchange="saveComment(
+                                ${courseIndex},
+                                ${subjectIndex},
+                                this.value
+                            )"
+                        >${subject.comment}</textarea>
+                    </div>
+
+                </div>
+            `;
+        });
+
+        courseHTML += `
+                </div>
+            </div>
+        `;
+
+        container.innerHTML += courseHTML;
+    });
+}
+
+function toggleChapter(courseIndex,subjectIndex,chapterIndex){
+
+    const chapter =
+        syllabusData[courseIndex]
+        .subjects[subjectIndex]
+        .chapters[chapterIndex];
+
+    chapter.done = !chapter.done;
+
+    saveLocal();
+    renderCourses();
+}
+
+function saveComment(courseIndex,subjectIndex,value){
+
+    syllabusData[courseIndex]
+    .subjects[subjectIndex]
+    .comment = value;
+
+    saveLocal();
+}
+
+function deleteCourse(id){
+
+    if(confirm("Delete this course?")){
+
+        syllabusData =
+            syllabusData.filter(c=>c.id!==id);
+
+        saveLocal();
+        renderCourses();
+    }
+}
+
+window.onclick=function(e){
+
+    const modal = document.getElementById("formModal");
+
+    if(e.target===modal){
+        closeForm();
+    }
+}
+
+renderCourses();
+
+// =========================
+// SUPPORT POPUP SYSTEM
+// =========================
+
+function markGithubClicked(){
+
+    localStorage.setItem("githubClicked", "true");
+
+    checkSupportStatus();
+}
+
+function markLinkedinClicked(){
+
+    localStorage.setItem("linkedinClicked", "true");
+
+    checkSupportStatus();
+}
+
+function checkSupportStatus(){
+
+    const github =
+        localStorage.getItem("githubClicked");
+
+    const linkedin =
+        localStorage.getItem("linkedinClicked");
+
+    // both clicked
+    if(github === "true" && linkedin === "true"){
+
+        document.getElementById(
+            "supportPopup"
+        ).style.display = "none";
+    }
+    else{
+
+        document.getElementById(
+            "supportPopup"
+        ).style.display = "flex";
+    }
+}
+
+// run on startup
+checkSupportStatus();
+</script>
+
+</body>
+</html>
+
